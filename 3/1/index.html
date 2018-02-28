@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JS Drum Kit</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+
+
+  <div class="keys">
+    <div data-key="65" class="key">
+      <kbd>A</kbd>
+      <span class="sound">clap</span>
+    </div>
+    <div data-key="83" class="key">
+      <kbd>S</kbd>
+      <span class="sound">hihat</span>
+    </div>
+    <div data-key="68" class="key">
+      <kbd>D</kbd>
+      <span class="sound">kick</span>
+    </div>
+    <div data-key="70" class="key">
+      <kbd>F</kbd>
+      <span class="sound">openhat</span>
+    </div>
+    <div data-key="71" class="key">
+      <kbd>G</kbd>
+      <span class="sound">boom</span>
+    </div>
+    <div data-key="72" class="key">
+      <kbd>H</kbd>
+      <span class="sound">ride</span>
+    </div>
+    <div data-key="74" class="key">
+      <kbd>J</kbd>
+      <span class="sound">snare</span>
+    </div>
+    <div data-key="75" class="key">
+      <kbd>K</kbd>
+      <span class="sound">tom</span>
+    </div>
+    <div data-key="76" class="key">
+      <kbd>L</kbd>
+      <span class="sound">tink</span>
+    </div>
+  </div>
+
+  <audio data-key="65" src="sounds/clap.wav"></audio>
+  <audio data-key="83" src="sounds/hihat.wav"></audio>
+  <audio data-key="68" src="sounds/kick.wav"></audio>
+  <audio data-key="70" src="sounds/openhat.wav"></audio>
+  <audio data-key="71" src="sounds/boom.wav"></audio>
+  <audio data-key="72" src="sounds/ride.wav"></audio>
+  <audio data-key="74" src="sounds/snare.wav"></audio>
+  <audio data-key="75" src="sounds/tom.wav"></audio>
+  <audio data-key="76" src="sounds/tink.wav"></audio>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    $(document).on('keydown', function(e) {
+      const $audio = $(`audio[data-key="${e.which}"]`);
+      const $key = $(`.key[data-key="${e.which}"]`);
+      if ($audio.length === 0) return; // do nothing if can't find corresponding key + sound
+      play($audio);
+      $key.addClass('playing');
+    });
+    $('.key').on('transitionend', function() {
+      $(this).removeClass('playing');
+      // The line above leverages a jQuery-specific feature, where jQuery
+      // binds `this` to the specific DOM element on which the event fired.
+      // Many of you implemented this event handler to look something like
+      //   $('.key').removeClass('playing');
+      // which was fine for the purpose of thcp is exercise. However, note that
+      // such an implementation removes the '.playing' class from *all*
+      // '.key' elements when a transition ends on any one of them.
+    });
+  });
+
+  function play($audio) {
+    var audioDomElement = $audio.get(0); // get first DOM element wrapped by jQuery object `$audio`
+    audioDomElement.currentTime = 0;
+    audioDomElement.play();
+  }
+</script>
+
+
+</body>
+</html>

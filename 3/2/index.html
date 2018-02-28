@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Type Ahead</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://ajax.aspnetcdn.com/ajax/jQuery/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+
+  <form class="search-form">
+    <input type="text" class="search" placeholder="City or State">
+    <ul class="suggestions">
+      <li>Filter for a city</li>
+      <li>or a state</li>
+    </ul>
+  </form>
+
+  <script type="text/javascript">
+  var places = [];
+  fetch('https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json')
+    .then(blob => blob.json())
+    .then(data => places.push(...data));
+
+  function findMatches(wordToMatch, places) {
+    return places.filter(place => {
+      // figure out if city or state matches what was searched
+      var p = new RegExp(wordToMatch, 'gi');
+      return place.city.match(p) || place.state.match(p);
+    });
+  }
+
+  function highlighted(text, searchText) {
+    return text.replace(
+      new RegExp(searchText, 'gi'),
+      `<span class="hl">${searchText}</span>`
+    );
+  }
+
+  function getCityName(place) {
+    return `${place.city}, ${place.state}`;
+  }
+
+  // solution below
+  $(document).ready(() => {
+    var $suggestions = $('.suggestions');
+    $('.search').on('keyup', () => {
+      var searchText = $('.search').val();
+      var matchArray = findMatches(searchText, places);
+      $suggestions.empty();
+
+      for (var place of matchArray) {
+        var name = highlighted(getCityName(place), searchText);
+
+        var $name = $('<span/>').addClass('name').append(name);
+        var $population = $('<span/>').addClass('population').append(`${place.population}`);
+        var $li = $('<li/>').append($name).append($population);
+        $suggestions.append($li);
+      }
+    });
+  });
+
+  </script>
+
+  </body>
+</html>
